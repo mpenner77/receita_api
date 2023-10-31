@@ -28,27 +28,26 @@ app = FastAPI()
 
 @app.get("/data/{data}")
 async def por_data(data: str, page: int = Query(1, description="Número da página")):
-    try:
-        # Calcular o índice de início e fim com base na página e itens por página
-        per_page = 500
-        start_idx = (page - 1) * per_page
-        end_idx = start_idx + per_page
 
-        # Conecte-se ao banco de dados SQLite
-        conn = create_engine(db_url)
+           # Calcular o índice de início e fim com base na página e itens por página
+           per_page = 500
+           start_idx = (page - 1) * per_page
+           end_idx = start_idx + per_page
+           
+           # Conecte-se ao banco de dados SQLite
+           conn = create_engine(db_url)
+           
+           # Consulte os dados com base na data de abertura e a faixa de índices
+           query = f"SELECT * FROM {table_name} WHERE data_yyyy_mm_dd = '{data}' LIMIT {per_page} OFFSET {start_idx}"
+           print(query)
+           print(f"testando")
+           result = pd.read_sql_query(query, conn)
+           print(f"imprimindo resultao {result}")
+           
+           
+           if not result.empty:
+                       data = result.to_dict(orient='records')
+                       return data
+           else:
+                       return {"message": "Nenhum dado encontrado para a data fornecida."}
 
-        # Consulte os dados com base na data de abertura e a faixa de índices
-        query = f"SELECT * FROM {table_name} WHERE data_yyyy_mm_dd = '{data}' LIMIT {per_page} OFFSET {start_idx}"
-        print(query)
-        print(f"testando")
-        result = pd.read_sql_query(query, conn)
-        print(result)
-
-
-        if not result.empty:
-            data = result.to_dict(orient='records')
-            return data
-        else:
-            return {"message": "Nenhum dado encontrado para a data fornecida."}
-    except Exception as e:
-        return {"message:": e}
