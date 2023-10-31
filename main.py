@@ -41,6 +41,7 @@ async def por_data(data: str, page: int = Query(1, description="Número da pági
         query = f"SELECT * FROM {table_name} WHERE data_yyyy_mm_dd = '{data}' LIMIT {per_page} OFFSET {start_idx}"
         print(query)
         result = pd.read_sql_query(query, conn)
+               print(result)
 
 
         if not result.empty:
