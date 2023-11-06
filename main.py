@@ -118,17 +118,37 @@ async def upload_csv(file: UploadFile):
         print("obtendo os ultimos 45 dias.")
 
         mantem_45_dias = """
-        DELETE FROM dados_csv_temp
-        WHERE data_abertura < current_date - interval '12 days';
+        DELETE FROM dados_csv
+        WHERE data_abertura < current_date - interval '45 days';
         """
         conn = psycopg2.connect(**db_params)
         cur = conn.cursor()
         cur.execute(mantem_45_dias)
         conn.commit()
+        cur.close()
+        conn.close()
 
         print("os ultimos 45 dias obtidos com sucesso.")
         print(time.asctime())
 
+        remove_duplicatas = '''
+        DELETE FROM dados_csv
+        WHERE (razao_social, cnpj, cnpj_raiz, contato_email_0_email) IN (
+    SELECT razao_social, cnpj, cnpj_raiz, contato_email_0_email
+    FROM dados_csv
+    GROUP BY razao_social, cnpj, cnpj_raiz, contato_email_0_email
+    HAVING COUNT(*) > 1
+        );
+        '''
+        conn = psycopg2.connect(**db_params)
+        cur = conn.cursor()
+        cur.execute(remove_duplicatas)
+        conn.commit()
+        cur.close()
+        conn.close()
+
+        print("duplicatas removidas com sucesso.")
+        print(time.asctime())
 
         print("rotina finalizada com sucesso.")
         return {'message':'upload do csv realizado com sucesso.'}
