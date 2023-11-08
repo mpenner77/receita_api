@@ -96,7 +96,7 @@ async def upload_csv(file: UploadFile):
 
 
         print("arquivo lido com sucesso.")
-
+        
         print(time.asctime())
         print("inserindo as datas")
         df["data_abertura"] = pd.to_datetime(df["data_abertura"], format='%d/%m/%Y')
@@ -105,17 +105,17 @@ async def upload_csv(file: UploadFile):
         print(time.asctime())
         # Connect to the PostgreSQL database
         db_url = f"postgresql+psycopg2://{db_params['user']}:{db_params['password']}@{db_params['host']}:{db_params['port']}/{db_params['database']}"
-
+        
         # Crie uma conexão com o banco de dados
         engine = create_engine(db_url)
-
+        
         print("inserindo os dados no banco")
         df.to_sql(table_name,engine, if_exists='append', index = False)
         print("dados inseridos com sucesso.")
         print(time.asctime())
         #captura os ultimos 30 dias, e elimina duplicada
         print("obtendo os ultimos 45 dias.")
-
+        
         mantem_45_dias = """
         DELETE FROM dados_csv
         WHERE data_abertura < current_date - interval '45 days';
@@ -126,30 +126,33 @@ async def upload_csv(file: UploadFile):
         conn.commit()
         cur.close()
         conn.close()
-
+        
         print("os ultimos 45 dias obtidos com sucesso.")
         print(time.asctime())
-
-        remove_duplicatas = '''
-        DELETE FROM dados_csv
-        WHERE (razao_social, cnpj, cnpj_raiz, contato_email_0_email) IN (
-    SELECT razao_social, cnpj, cnpj_raiz, contato_email_0_email
-    FROM dados_csv
-    GROUP BY razao_social, cnpj, cnpj_raiz, contato_email_0_email
-    HAVING COUNT(*) > 1
+        
+        
+        remove_duplicata = '''
+        DELETE   FROM dados_csv T1
+          USING       dados_csv T2
+        WHERE  T1.ctid    < T2.ctid      
+          AND  T1.cnpj    = T2.cnpj 
         );
         '''
+        
+        
         conn = psycopg2.connect(**db_params)
         cur = conn.cursor()
-        cur.execute(remove_duplicatas)
+        cur.execute(remove_duplicata)
         conn.commit()
         cur.close()
         conn.close()
-
+        
+        
         print("duplicatas removidas com sucesso.")
         print(time.asctime())
-
+        
         print("rotina finalizada com sucesso.")
+
         return {'message':'upload do csv realizado com sucesso.'}
 
     except Exception as e:
