@@ -92,7 +92,7 @@ async def upload_csv(file: UploadFile):
         print(time.asctime())
         print("lendo arquivo.")
         csv_content = await file.read()
-        df = pd.read_csv(StringIO(csv_content.decode('latin1')), sep=";",  encoding="latin1", decimal=",")
+        df = pd.read_csv(StringIO(csv_content.decode('latin1')), sep=";",  encoding="latin1", decimal=",", dtype = 'str')
 
 
 
