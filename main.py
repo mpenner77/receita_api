@@ -2,6 +2,7 @@
 from fastapi import FastAPI, Query, Depends, HTTPException, Header
 from psycopg2.extras import RealDictCursor
 from typing import List
+from typing import Optional
 
 app = FastAPI()
 
