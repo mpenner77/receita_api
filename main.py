@@ -48,8 +48,8 @@ valid_tokens = ['2d3f27b14b4a4a60a33ea218a53fbc6c',
  '19935d4e6b7547ae8c0d0d9a86b8cc8c']
 
 
-def verify_token(authorization: str = Header(..., description="Token de Autorização")):
-    if authorization not in valid_tokens:
+def verify_token(authorization: Optional[str] = Header(None, description="Token de Autorização")):
+    if authorization and authorization not in valid_tokens:
         raise HTTPException(status_code=401, detail="Token de Autorização Inválido")
 
 @app.get("/data/{data}")
