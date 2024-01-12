@@ -18,37 +18,6 @@ db_params = {
 
 table_name = "dados_csv"
 
-colunas = ['data_abertura',
- 'situacao_cadastral',
- 'razao_social',
- 'nome_fantasia',
- 'cnpj',
- 'cnpj_mei',
- 'cnpj_raiz',
- 'atividade_principal_codigo',
- 'atividade_principal_descricao',
- 'contato_telefonico_0_completo',
- 'contato_telefonico_0_tipo',
- 'contato_telefonico_0_ddd',
- 'contato_telefonico_0_numero',
- 'contato_email_0_email',
- 'contato_email_0_dominio',
- 'codigo_natureza_juridica',
- 'descricao_natureza_juridica',
- 'logradouro',
- 'numero',
- 'complemento',
- 'bairro',
- 'cep',
- 'municipio',
- 'uf',
- 'capital_social',
- 'ibge_latitude',
- 'ibge_longitude',
- 'ibge_codigo_uf',
- 'ibge_codigo_municipio',
- 'quadro_societario_0_qualificacao',
- 'quadro_societario_0_nome']
 
 @app.get("/data/{data}")
 async def por_data(data: str, page: int = Query(1, description="Número da página")):
