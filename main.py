@@ -79,7 +79,3 @@ async def por_data(data: str, page: int = Query(1, description="Número da pági
         return {"message": "Nenhum dado encontrado para a data fornecida."}
 
 
-        return {'message':'upload do csv realizado com sucesso.'}
-
-    except Exception as e:
-        return{'message': 'erro ao subir o arquivo', 'erro': e}
