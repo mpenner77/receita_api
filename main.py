@@ -54,14 +54,6 @@ def verify_token(authorization: str = Header(..., description="Token de Autoriza
     if authorization not in valid_tokens:
         raise HTTPException(status_code=401, detail="Token de Autorização Inválido")
 
-@app.get("/validate-token", response_model=dict)
-async def validate_token(token: str = Depends(verify_token)):
-    return {"message": "Token válido"}
-
-@app.get("/")
-def welcome():
- return {"message": "Ola"}
-
 
 
 @app.get("/data/{data}")
